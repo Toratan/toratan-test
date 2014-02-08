@@ -1,0 +1,22 @@
+#!/bin/bash
+# validate that php exists
+command -v php >/dev/null 2>&1 || {
+    echo -e "\e[33mphp\e[31m not found...\n[ Aborting ]\e[m"
+    exit 1;
+}
+# define a function for upsearching an arg
+function upsearch() 
+{     
+	test / == "$PWD" && return || test -e "$1" && echo "$PWD" && return || cd .. >/dev/null && upsearch "$1"; 
+}
+# search upward for bin/phpspec script
+PHPSPEC=$(upsearch "bin/phpspec");
+# validate if target script has been found
+if [ -z "$PHPSPEC" ]; then
+	echo -e "\033[31mphp-spec 'bin/phpspec' file not found nither at current folder nor at parent folders!!\n[ ABORTING ]\033[m";
+	exit 1;
+fi;
+# update the phpspec real address
+PHPSPEC="$PHPSPEC/bin/phpspec";
+# run the phpspec stript using system php
+/usr/bin/env php $PHPSPEC;
