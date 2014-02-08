@@ -1,0 +1,20 @@
+#!/bin/bash
+if [ "$(id -u)" != "0" ]; then
+   echo -e "\e[31m[ Permission  denied ] \e[33mThis script must be run as root!\e[m" 1>&2
+   exit 1
+fi
+if [ ! -f "`dirname $0`/phpspec-launcher" ]; then
+	echo -e "\e[31m[ NotFound ] \e[33mNo '`dirname $0`/phpspec-launcher' found!\n\e[31m[ Aborting ]\e[m" 1>&2;
+	exit 1;
+fi;
+cp "`dirname $0`/phpspec-launcher" "/usr/bin/phpspec"
+if [ ! -f "/usr/bin/phpspec" ]; then
+	echo -e "\e[31m[ Failure ] \e[33mCould not copy '`dirname $0`/phpspec-launcher' to '/usr/bin/phpspec'!\n\e[31m[ Aborting ]\e[m" 1>&2;
+	exit 1;
+fi;
+chmod 555 "/usr/bin/phpspec"
+command -v phpspec >/dev/null 2>&1 || {
+    echo -e "\e[33mphpspec\e[31m added to '/usr/bin' but not accessable!!\n[ Aborting ]\e[m"
+    exit 1;
+}
+echo -e "\e[32m[ Success ] \e[33mphpspec is accessabble system wide using command \e[m'phpspec'\e[32m.\e[m";
