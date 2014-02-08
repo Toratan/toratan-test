@@ -19,4 +19,4 @@ fi;
 # update the phpspec real address
 PHPSPEC="$PHPSPEC/bin/phpspec";
 # run the phpspec stript using system php
-/usr/bin/env php $PHPSPEC;
+/usr/bin/env php $PHPSPEC $@;
