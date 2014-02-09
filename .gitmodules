@@ -1,0 +1,3 @@
+[submodule "vendor/phpspec/phpspec"]
+	path = vendor/phpspec/phpspec
+	url = git://github.com/phpspec/phpspec.git
