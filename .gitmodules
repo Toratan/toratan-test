@@ -1,3 +1,6 @@
 [submodule "vendor/phpspec/phpspec"]
 	path = vendor/phpspec/phpspec
 	url = git://github.com/phpspec/phpspec.git
+[submodule "src"]
+	path = src
+	url = git@github.com:dariushha/toratan.git
