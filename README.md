@@ -22,7 +22,7 @@ git clone --bare git@github.com:dariushha/phpspec-skeleton.git
 # move into cloned repo
 cd phpspec-skeleton.git
 # push a mirror to any empty repo 
-git push --mirror git push --mirror git@github.com:someuser/new-repository.git
+git push --mirror git@github.com:someuser/new-repository.git
 # moveback to temp folder
 cd ..
 # remove the bare repo of phpspec-skeleton
