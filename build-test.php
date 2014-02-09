@@ -2,23 +2,23 @@
 <?php
     $script_name = array_shift($argv);
     $includes = array(
-            "./application/*",
-            "./core/*",
-            "./modules/*"
+            "./src/*",
+            "./src/application/*",
+            "./src/core/*",
+            "./src/modules/*"
     );
     /*
-     * './zinux/*' -not -path '' -not -path '' -not -path '' -not -path '' -not -path ''
+     * './src/zinux/*' -not -path '' -not -path '' -not -path '' -not -path '' -not -path ''
      */
     $excludes = array(
-            "./src/*",
-            "./zinux/*",
-            "./vendor/*",
+			"./src/zinux/*",
+            "./src/vendor/*",
             "*$script_name",
-            "./public_html/*",
-            "./core/vendors/socket*",
-            "./core/db/activeRecord/lib/*",
-            "*/view/profile/profile-steps/*",
-            "./core/ui/markdown/*"
+            "./src/public_html/*",
+            "./src/core/ui/markdown/*",
+            "./src/core/vendors/socket*",
+            "./src/core/db/activeRecord/lib/*",
+            "*/view/profile/profile-steps/*"
     );
     $query = "find ";
     foreach($includes as $include)
@@ -30,7 +30,7 @@
     {
         $query .= " -not -path '$exclude'";
     }
-    require 'zinux/kernel/utilities/string.php';
-    $matches = \array_filter(\explode(PHP_EOL, \zinux\kernel\utilities\string::inverse_preg_quote(\preg_replace(array("#(\./)(.*)(.php)".PHP_EOL."#i", "#(".PHP_EOL."\\\\)(.*)#i", "#(.*)\\\\\n".PHP_EOL."#i"), array(PHP_EOL."bin/phpspec desc -n \"$2\"".PHP_EOL, "$2", "$1".PHP_EOL),  \preg_quote(\shell_exec($query),"#")), "#")), "strlen");
+    require 'src/zinux/kernel/utilities/string.php';
+    $matches = \array_filter(\explode(PHP_EOL, \zinux\kernel\utilities\string::inverse_preg_quote(\preg_replace(array("#(\./src/)(.*)(.php)".PHP_EOL."#i", "#(".PHP_EOL."\\\\)(.*)#i", "#(.*)\\\\\n".PHP_EOL."#i"), array(PHP_EOL."bin/phpspec desc -n \"$2\"".PHP_EOL, "$2", "$1".PHP_EOL),  \preg_quote(\shell_exec($query),"#")), "#")), "strlen");
     \array_shift($matches);
     echo \preg_replace("#\\\\\"(".PHP_EOL."|$)#i", "\"".PHP_EOL, \implode(PHP_EOL, $matches));
