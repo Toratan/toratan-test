@@ -23,8 +23,8 @@ class dbBootstrapSpec extends \PhpSpec\ObjectBehavior
     function it_tests_db_switch_mode()
     {
         # setting the db config to a valid one should not throw any exceptions
-        $this->shouldNotThrow('\zinux\kernel\exceptions\invalideArgumentException')->duringswitch_database_mode(\application\dbBootstrap::MODE_TORATAN);
+        $this->shouldNotThrow('\zinux\kernel\exceptions\invalideArgumentException')->duringSwitch_database_mode(\application\dbBootstrap::MODE_TORATAN);
         # any invalid mode will arises exceptions
-        $this->shouldThrow('\zinux\kernel\exceptions\invalideArgumentException')->duringswitch_database_mode("SOME_RANDOM_TXT");
+        $this->shouldThrow('\zinux\kernel\exceptions\invalideArgumentException')->duringSwitch_database_mode("SOME_RANDOM_TXT");
     }
 }

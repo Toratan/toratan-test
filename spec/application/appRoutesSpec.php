@@ -39,7 +39,7 @@ class appRoutesSpec extends \PhpSpec\ObjectBehavior
             # process the uri
             $r->Process();
             # process the request due to {$this->Fetch()}
-            $this->shouldNotThrow('\Exception')->duringprocess($r);
+            $this->shouldNotThrow('\Exception')->duringProcess($r);
             # re-process the request
             $r->Process();
             /**
