@@ -4,7 +4,7 @@ require_once "spec/bootstrap.php";
 /**
  * A specification for \core\utiles\loadTime
  * @filesource src\core\utiles\loadTime.php
- * @author user <b.g.dariush@gmail.com>
+ * @author grumpy <b.g.dariush@gmail.com>
  */
 class loadTimeSpec extends \PhpSpec\ObjectBehavior
 {

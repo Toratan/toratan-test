@@ -4,7 +4,7 @@ require_once "spec/bootstrap.php";
 /**
  * A specification for \modules\opsModule\controllers\messagesController
  * @filesource src\modules\opsModule\controllers\messagesController.php
- * @author user <b.g.dariush@gmail.com>
+ * @author grumpy <b.g.dariush@gmail.com>
  */
 class messagesControllerSpec extends \PhpSpec\ObjectBehavior
 {

@@ -4,7 +4,7 @@ require_once "spec/bootstrap.php";
 /**
  * A specification for \modules\opsModule\controllers\profileController
  * @filesource src\modules\opsModule\controllers\profileController.php
- * @author user <b.g.dariush@gmail.com>
+ * @author grumpy <b.g.dariush@gmail.com>
  */
 class profileControllerSpec extends \PhpSpec\ObjectBehavior
 {

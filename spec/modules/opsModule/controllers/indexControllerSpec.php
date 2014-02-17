@@ -4,7 +4,7 @@ require_once "spec/bootstrap.php";
 /**
  * A specification for \modules\opsModule\controllers\indexController
  * @filesource src\modules\opsModule\controllers\indexController.php
- * @author user <b.g.dariush@gmail.com>
+ * @author grumpy <b.g.dariush@gmail.com>
  */
 class indexControllerSpec extends \PhpSpec\ObjectBehavior
 {

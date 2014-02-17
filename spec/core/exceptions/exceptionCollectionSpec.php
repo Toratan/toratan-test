@@ -4,7 +4,7 @@ require_once "spec/bootstrap.php";
 /**
  * A specification for \core\exceptions\exceptionCollection
  * @filesource src\core\exceptions\exceptionCollection.php
- * @author user <b.g.dariush@gmail.com>
+ * @author grumpy <b.g.dariush@gmail.com>
  */
 class exceptionCollectionSpec extends \PhpSpec\ObjectBehavior
 {
