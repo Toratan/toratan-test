@@ -101,12 +101,20 @@ catch(Exception $e)
 }
     # the end of stream and clean the buffer
     ob_end_clean();
+    \opt_out("Bootstraping....");
     # truncate db's tables
-    echo "\033[33m> Truncating Tables....\033[m";
-    \truncate_db();
-    echo "\033[32m [ DONE ]\033[m", PHP_EOL;
+    \opt_out("Truncating Tables....", "\\truncate_db");
+    # creates users
+    \opt_out("Creating new test users....", array("\spec\core\db\models\userSpec", "createUsers"));
     # return from bootstrap
     return;
+    function opt_out($init_txt, $opt_delegate = NULL, $args = array())
+    {
+        echo "\033[33m> $init_txt\033[m";
+        if($opt_delegate)
+            \call_user_func($opt_delegate, $args);
+        echo "\033[43G\033[32m[ DONE ]\033[m", PHP_EOL;
+    }
     /**
      * Truncates db
      */
