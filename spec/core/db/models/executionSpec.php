@@ -31,8 +31,7 @@ class executionSpec extends \PhpSpec\ObjectBehavior
         # add an other record and also checking that the result should be the end time of load time and it's numeric
         $this->record($lt)->shouldBeNumeric();
         # the difference between current count of execution should one unit ahead of previously count
-        if(\core\db\models\execution::count() - $count !== 1)
-            throw new \PhpSpec\Exception\Example\FailureException("expected to `+1` record gets added but there are `+".abs(\core\db\models\execution::count() - $count).'`!');
+        $this->count()->shouldBeLike($count + 1);
     }
     /**
      * test getting average load
