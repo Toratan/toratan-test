@@ -50,9 +50,9 @@ class userSpec extends \PhpSpec\ObjectBehavior
     {
         # define three sample user info
         foreach(array(
-                self::USER_ZERO => array("USER0", "NOMAIL@MAIL0.COM", "00"),
-                self::USER_ONE   => array("USER1", "NOMAIL@MAIL1.COM", "01"),
-                self::USER_TWO  => array("USER2", "NOMAIL@MAIL2.COM", "02"),
+                self::USER_ZERO => array("USER0", "USER0@HOST0.COM", "PASS0"),
+                self::USER_ONE   => array("USER1", "USER1@HOST1.COM", "PASS1"),
+                self::USER_TWO  => array("USER2", "USER2@HOST2.COM", "PASS2"),
         ) as $uid => $user)
         {
             try
