@@ -99,6 +99,24 @@ catch(Exception $e)
         echo \strip_tags(\zinux\kernel\utilities\string::inverse_preg_quote(\preg_replace("#(<br\s*(/)?>)#i", "", \preg_quote(\ob_get_clean(), "#")), "#"));
 	exit;
 }
-	# the end of stream and clean the buffer
-	ob_end_clean();
-
+    # the end of stream and clean the buffer
+    ob_end_clean();
+    # truncate db's tables
+    \truncate_db();
+    # return from bootstrap
+    return;
+    /**
+     * Truncates db
+     */
+    function truncate_db()
+    {
+        # validate the RUNNING_ENV 
+        if(RUNNING_ENV !== "TEST")
+            throw new \PhpSpec\Exception\Example\FailureException("`".__FUNCTION__."` at `".__FILE__."`ONLY WORKS AT TESTING ENV.");
+        # delete all execution time
+        $exec = new \core\db\models\execution;
+        $exec->query("truncate table ".\ActiveRecord\Inflector::instance()->tableize("execution"));
+        # delete all users except the ROOT user
+        $user = new \core\db\models\user;
+        $user->delete_all(array("conditions"=>array("user_id <> ?", \core\db\models\user::ROOT_USER_ID)));
+    }
