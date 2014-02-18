@@ -119,4 +119,24 @@ catch(Exception $e)
         # delete all users except the ROOT user
         $user = new \core\db\models\user;
         $user->delete_all(array("conditions"=>array("user_id <> ?", \core\db\models\user::ROOT_USER_ID)));
+        # fetch tables
+        $tables = \array_flip(\ActiveRecord\Connection::instance()->tables());
+        # remove two above tables from table list
+        unset($tables[\ActiveRecord\Inflector::instance()->tableize("user")], $tables[\ActiveRecord\Inflector::instance()->tableize("execution")]);
+        # re-flip the table arra
+        $tables = \array_flip($tables);
+        foreach($tables as $table)
+        {
+            # create a taget class to call
+            $ins_table = "\\core\\db\\models\\".\ActiveRecord\Utils::singularize($table);
+            # reset folder id auto increment value
+            $model = new $ins_table;
+            # truncate all tables
+            $query = "TRUNCATE TABLE ".\ActiveRecord\Inflector::instance()->tableize($table);
+            # except folders table because of root folder, which we will reset the AUTO_INCREMENT's value
+            if($table == "folders")
+                $query = "ALTER TABLE ".\ActiveRecord\Inflector::instance()->tableize($table)." AUTO_INCREMENT=1";
+            # run the query
+            $model->query($query);  
+        }
     }
