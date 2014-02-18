@@ -4,3 +4,6 @@
 [submodule "src"]
 	path = src
 	url = git@github.com:dariushha/toratan.git
+[submodule "vendor/Faker"]
+	path = vendor/Faker
+	url = git@github.com:fzaninotto/Faker.git
