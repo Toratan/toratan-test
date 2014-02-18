@@ -62,18 +62,8 @@ try
             
             # load project basic config initializer
             ->SetConfigIniliazer(new \zinux\kernel\utilities\iniParser(PROJECT_ROOT."/config/default.cfg", RUNNING_ENV))
-            # register php markdown parser 
-            # repo : https://github.com/michelf/php-markdown
-            # @notice : from markdown version 1.0.2 this it not valid according 
-            # to the structure change in php-markdown, see the following codes 
-            # for workarounds.
-            #->registerPlugin("PHP-MARKDOWN", "/core/ui/markdown/lib")
-            # Actually we don't need to include markdown at every request
-            # i will invoke it when it is necessary at its time :)
-            #->SetInitializer(new \core\ui\markdown\markdownInitiliazer)
-            # register socket-raw [ for now i don't need this ]
-            # repo : https://github.com/clue/socket-raw
-            #->registerPlugin("SOCKET-RAW", "/core/vendors/socket-raw")
+            # register php faker
+            ->registerPlugin("TEST-FAKER", PROJECT_ROOT."../vendor/Faker/src")
             # init the application's optz.
             ->Startup()
             # run the application 
