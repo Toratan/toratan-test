@@ -102,7 +102,9 @@ catch(Exception $e)
     # the end of stream and clean the buffer
     ob_end_clean();
     # truncate db's tables
+    echo "\033[33m> Truncating Tables....\033[m";
     \truncate_db();
+    echo "\033[32m [ DONE ]\033[m", PHP_EOL;
     # return from bootstrap
     return;
     /**
