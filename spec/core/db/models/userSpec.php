@@ -11,7 +11,12 @@ class userSpec extends \PhpSpec\ObjectBehavior
     const USER_ZERO = 0;
     const USER_ONE = 1;
     const USER_TWO = 2;
+    /**
+     * the internal users cache
+     * @var array
+     */
     private static $users = array();
+    
     function it_is_initializable()
     {
         $this->shouldHaveType('\core\db\models\user');
@@ -48,16 +53,16 @@ class userSpec extends \PhpSpec\ObjectBehavior
                 self::USER_ZERO => array("USER0", "NOMAIL@MAIL0.COM", "00"),
                 self::USER_ONE   => array("USER1", "NOMAIL@MAIL1.COM", "01"),
                 self::USER_TWO  => array("USER2", "NOMAIL@MAIL2.COM", "02"),
-        ) as $key => $user)
+        ) as $uid => $user)
         {
             try
             {
                 $u = new \core\db\models\user;
                 $u->Signup($user[0], $user[1], $user[2]);
-                self::$users[$key] = $u;
+                self::$users[$uid] = $u;
             }
             # ingnore already existed users
-            catch(\core\db\exceptions\alreadyExistsException $aee) { unset($aee); }
+            catch(\core\db\exceptions\alreadyExistsException $aee) { unset($aee); self::$users[$uid] = \core\db\models\user::Fetch($user[0]); }
             # if any other exceptions get thrown
             catch(\core\exceptions\exceptionCollection $ce)
             {
