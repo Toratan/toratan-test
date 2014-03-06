@@ -138,4 +138,61 @@ class folderSpec extends \PhpSpec\ObjectBehavior
         }
         $this->fetchTrashes(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(0);
     }
+    function it_archives_folders()
+    {
+        foreach(self::$folders as $folder)
+        {
+            # first logically delete folders
+            $this->archive($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::FLAG_SET)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check trashed folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_archive = 1")))->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check exception accurance of deleted folder
+            $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_archive = 0")));
+        }
+        $this->fetchArchives(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(count(self::$folders));
+        /**
+         * Un-trash the trashes
+         */
+        foreach(self::$folders as $folder)
+        {
+            # first logically delete folders
+            $this->archive($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::FLAG_UNSET)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check trashed folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_archive = 0")))->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check exception accurance of deleted folder
+            $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_archive = 1")));
+        }
+        $this->fetchArchives(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(0);
+    }
+    function it_tests_sharing_and_access_ops()
+    {
+        foreach(self::$folders as $folder)
+        {
+            # every user has an access route to its folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $external_user)
+            {
+                # no other users can access to non-public folders
+                $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, $external_user->user_id);
+            }
+            # the user decides to make the folder public
+            $this->share($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # every user still has an access route to its folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_public = 1")))->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $external_user)
+            {
+                # other users can access to public folders
+                $this->shouldNotThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, $external_user->user_id);
+                $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            }
+        }
+    }
 }
