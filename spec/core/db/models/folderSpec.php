@@ -116,10 +116,26 @@ class folderSpec extends \PhpSpec\ObjectBehavior
     {
         foreach(self::$folders as $folder)
         {
-            $this->delete($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # first logically delete folders
+            $this->delete($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::DELETE_PUT_TARSH)->shouldReturnAnInstanceOf('\core\db\models\folder');
             # check trashed folder
-            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::WHATEVER, \core\db\models\folder::FLAG_SET)->shouldReturnAnInstanceOf('\core\db\models\folder');
-            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("contiditions"=>array("s_trash = 0")))->shouldBeNull();
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_trash = 1")))->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check exception accurance of deleted folder
+            $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_trash = 0")));
         }
+        $this->fetchTrashes(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(count(self::$folders));
+        /**
+         * Un-trash the trashes
+         */
+        foreach(self::$folders as $folder)
+        {
+            # first logically delete folders
+            $this->delete($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::DELETE_RESTORE)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check trashed folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_trash = 0")))->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # check exception accurance of deleted folder
+            $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_trash = 1")));
+        }
+        $this->fetchTrashes(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(0);
     }
 }
