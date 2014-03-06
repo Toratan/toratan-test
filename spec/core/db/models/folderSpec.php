@@ -196,6 +196,9 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
             }
         }
+        echo PHP_EOL, "\033[33m$ Remmeber to set `defined('RUNNING_ENV') || define('RUNNING_ENV', 'TEST');` in `bin/init.d/deepSharer.php` and restart the the script to make this script work!\033[m", PHP_EOL;
+        /** Sleep for a while to give deepSharer to do its things **/
+        sleep(2);
         foreach(self::$folders as $folder)
         {
             foreach (
@@ -203,12 +206,12 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ZERO),
                 \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
                 \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
-                ) as $external_user)
+                ) as $user)
             {
                 if($folder->parent_id > 0)
                 {                    
                     # in testing folder containing subfolders should have exactly 4 subfolders
-                    $this->fetchItems($external_user->user_id, $folder->parent_id)->shouldHaveCount(4);
+                    $this->fetchItems($user->user_id, $folder->parent_id)->shouldHaveCount(4);
                 }
             }
         }
