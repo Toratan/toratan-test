@@ -168,6 +168,8 @@ class folderSpec extends \PhpSpec\ObjectBehavior
     {
         foreach(self::$folders as $folder)
         {
+            # we only do it for high-level folders which should affect the entire file system ops.
+            if($folder->parent_id) continue;
             # every user has an access route to its folder
             $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf(new \core\db\models\folder);
             foreach (
@@ -192,6 +194,22 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 # other users can access to public folders
                 $this->shouldNotThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, $external_user->user_id);
                 $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            }
+        }
+        foreach(self::$folders as $folder)
+        {
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ZERO),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $external_user)
+            {
+                if($folder->parent_id > 0)
+                {                    
+                    # in testing folder containing subfolders should have exactly 4 subfolders
+                    $this->fetchItems($external_user->user_id, $folder->parent_id)->shouldHaveCount(4);
+                }
             }
         }
     }
