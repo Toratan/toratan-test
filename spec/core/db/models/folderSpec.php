@@ -196,7 +196,7 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
             }
         }
-        echo PHP_EOL, "\033[33m$ Remmeber to set `defined('RUNNING_ENV') || define('RUNNING_ENV', 'TEST');` in `bin/init.d/deepSharer.php` and restart the the script to make this script work!\033[m", PHP_EOL;
+        echo PHP_EOL, "\033[33m$ Remmeber to set `\033[mdefined('RUNNING_ENV') || define('RUNNING_ENV', 'TEST');\033[33m` in `\033[mbin/init.d/deepSharer.php\033[33m` and restart the the script to make this script testable!\033[m", PHP_EOL;
         /** Sleep for a while to give deepSharer to do its things **/
         sleep(2);
         foreach(self::$folders as $folder)
@@ -215,5 +215,72 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 }
             }
         }
+        $this->fetchShared(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(count(self::$folders));
+        /**
+         * Unshare things
+         */
+        foreach(self::$folders as $folder)
+        {
+            # we only do it for high-level folders which should affect the entire file system ops.
+            if($folder->parent_id) continue;
+            # every user has an access route to its folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $external_user)
+            {
+                # other users can access to public folders
+                $this->shouldNotThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, $external_user->user_id);
+                $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            }
+            # the user decides to make the folder public
+            $this->share($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, \core\db\models\folder::FLAG_UNSET)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            # every user still has an access route to its folder
+            $this->fetch($folder->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, array("conditions"=>array("is_public = 0")))->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $external_user)
+            {
+                # other users cannot access to non-public folders
+                $this->shouldThrow('\core\db\exceptions\dbNotFoundException')->duringFetch($folder->folder_id, $external_user->user_id);
+            }
+        }
+        /** Sleep for a while to give deepSharer to do its things **/
+        sleep(2);
+        foreach(self::$folders as $folder)
+        {
+            foreach (
+                array(
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_ONE),
+                \spec\core\db\models\userSpec::getUser(\spec\core\db\models\userSpec::USER_TWO)
+                ) as $user)
+            {
+                if($folder->parent_id > 0)
+                {                    
+                    # in testing folder containing subfolders should have exactly 4 subfolders
+                    $this->fetchItems($user->user_id, $folder->parent_id)->shouldHaveCount(0);
+                }
+            }
+        }
+        $this->fetchShared(\spec\core\db\models\userSpec::getUser()->user_id)->shouldHaveCount(0);
+    }
+    function it_moves_folders()
+    {
+        for($index = 0; $index<count(self::$folders)-1; $index+=2)
+        {
+            $this->fetch(self::$folders[$index]->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            $this->fetch(self::$folders[$index+1]->folder_id, \spec\core\db\models\userSpec::getUser()->user_id)->shouldReturnAnInstanceOf(new \core\db\models\folder);
+            $this->move(self::$folders[$index]->folder_id, \spec\core\db\models\userSpec::getUser()->user_id, self::$folders[$index]->parent_id, self::$folders[$index+1]->folder_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
+            $folder = $this->o->fetch(self::$folders[$index]->folder_id, \spec\core\db\models\userSpec::getUser()->user_id);
+            if($folder->parent_id == self::$folders[$index]->parent_id)
+                throw new \PhpSpec\Exception\Example\FailureException("expected to parent change, but didn't!");
+            if($folder->parent_id !== self::$folders[$index+1]->folder_id)
+                throw new \PhpSpec\Exception\Example\FailureException("parent didn't change as expected!");
+        }
     }
 }
+/** folderSpec is done **/
