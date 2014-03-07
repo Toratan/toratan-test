@@ -251,3 +251,4 @@ class linkSpec extends \PhpSpec\ObjectBehavior
         $this->fetchItems(\spec\core\db\models\userSpec::getUser()->user_id, $folder->folder_id)->shouldHaveCount(count(self::$links)/2);
     }
 }
+/** linkSpec is done **/
