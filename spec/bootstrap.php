@@ -36,7 +36,7 @@ try
 	# define the sever name
     defined("__SERVER_NAME__") || define("__SERVER_NAME__", $_SERVER['HTTP_HOST']);
     # invoke the zinux framework
-    require_once PUBLIC_HTML.'/../zinux/baseZinux.php';
+    require_once PUBLIC_HTML.'/../zinux/zinux.php';
     
     # suppress E_STRICT error reporting
     error_reporting(E_ALL & ~E_STRICT);
