@@ -196,7 +196,7 @@ class folderSpec extends \PhpSpec\ObjectBehavior
                 $this->fetch($folder->folder_id, $external_user->user_id)->shouldReturnAnInstanceOf('\core\db\models\folder');
             }
         }
-        echo PHP_EOL, "\033[33m$ Remmeber to set `\033[mdefined('RUNNING_ENV') || define('RUNNING_ENV', 'TEST');\033[33m` in `\033[mbin/init.d/deepSharer.php\033[33m` and restart the the script to make this script testable!\033[m", PHP_EOL;
+        echo PHP_EOL, "\033[33m$ Remember to set `\033[mdefined('RUNNING_ENV') || define('RUNNING_ENV', 'TEST');\033[33m` in `\033[mbin/init.d/deepSharer.php\033[33m` and restart the the script to make this script testable!\033[m", PHP_EOL;
         /** Sleep for a while to give deepSharer to do its things **/
         sleep(2);
         foreach(self::$folders as $folder)
